@@ -22,10 +22,13 @@ RSpec.describe Lowkey::ParamProxy do
     end
 
     context 'typed: false with a ValueExpression default' do
-      # Simulates a LowType::ValueExpression without requiring LowType to be loaded
-      let(:value_expression) do
-        Struct.new(:value) { def class; Struct.new(:name) { }.new('ValueExpression') end }.new('hello')
+      # Defines a minimal ValueExpression stub so defined?(ValueExpression) resolves
+      # and instance_of? works without requiring LowType to be loaded.
+      before do
+        stub_const('ValueExpression', Class.new { attr_reader :value; def initialize(v) = (@value = v) })
       end
+
+      let(:value_expression) { ValueExpression.new('hello') }
 
       let(:mock_expression) do
         double('expression', default_value: value_expression, required?: false)

@@ -46,7 +46,8 @@ module Lowkey
         return nil if @expression.default_value.nil? && required?
 
         value = @expression.default_value
-        return value.value.inspect if value.class.name == 'ValueExpression'
+        value_expression_class = defined?(ValueExpression) ? ValueExpression : nil
+        return value.value.inspect if value_expression_class && value.instance_of?(value_expression_class)
 
         return value.inspect
       end
